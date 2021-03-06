@@ -2,7 +2,7 @@ const conn = require('./db');
 
 const syncAndSeed = async () => {
   const SQL = `
-    TRUNCATE TABLE xeno;
+    DROP TABLE IF EXISTS xeno;
   
     CREATE TABLE xeno (
       id SERIAL PRIMARY KEY,

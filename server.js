@@ -11,7 +11,6 @@ const run = async () => {
   try {
     app.listen(PORT, () => console.log(`listening on ${PORT}`));
     await conn.connect();
-
     await syncAndSeed();
   } catch (error) {
     console.log(error);
