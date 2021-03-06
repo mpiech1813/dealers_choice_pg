@@ -1,46 +1,21 @@
 const express = require('express');
-const pg = require('pg');
+const syncAndSeed = require('./db/syncAndSeed');
+const conn = require('./db/db');
 
 const app = express();
 const PORT = process.env.PORT || 1813;
-const conn = new pg.Client(
-  process.env.DATABASE_URL || 'postgres://localhost/alien'
-);
 
-conn.connect();
+app.use('/', require('./routes/routes'));
 
-const allAliens = 'SELECT * FROM xeno';
-
-app.get('/', async (req, res, next) => {
+const run = async () => {
   try {
-    const data = await conn.query(allAliens);
-    const list = data.rows;
-    const HTML = `
-        <html>
-            <head></head>
-            <body>
-                <h1>hello</h1>
-                <ul>
-                ${list
-                  .map((alien) => {
-                    return `<li><a>${alien.name}</a></li>`;
-                  })
-                  .join('')}
-                </ul>
-            </body>
-        </html>
-        `;
+    app.listen(PORT, () => console.log(`listening on ${PORT}`));
+    await conn.connect();
 
-    res.send(HTML);
+    await syncAndSeed();
   } catch (error) {
     console.log(error);
   }
-});
-
-const syncAndSeed = async () => {};
-
-const run = () => {
-  app.listen(PORT, () => console.log(`listening on ${PORT}`));
 };
 
 run();
