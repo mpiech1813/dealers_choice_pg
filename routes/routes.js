@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
                   <ul>
                   ${list
                     .map((alien) => {
-                      return `<li><a>${alien.name}</a></li>`;
+                      return `<li><a href='/${alien.id}'>${alien.name}</a></li>`;
                     })
                     .join('')}
                   </ul>
@@ -32,6 +32,18 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const idNum = req.params.id;
+    const singleAlien = `SELECT name AS "Name", size AS "Size", growth as "Growth" FROM xeno WHERE id = ${idNum}`;
+    const data = await conn.query(singleAlien);
+    const details = data.rows;
+    const HTML = `
+        <html>
+          <body>
+            <h1>${details[0].Name}</h1>
+            <p>Size: ${details[0].Size}</p> <p>Growth Stage: ${details[0].Growth} </p>
+          </body>
+        </html>
+      `;
+    res.send(HTML);
   } catch (error) {
     console.log(error);
   }
